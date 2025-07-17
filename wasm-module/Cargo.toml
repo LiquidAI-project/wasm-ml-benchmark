@@ -7,5 +7,3 @@ edition = "2021"
 wasi-nn = "0.6.0"
 image = "0.25.1"
 ndarray = "0.15.6"
-num_threads = "0.1.7"
-libc = {path = "../libc source code/libc"}

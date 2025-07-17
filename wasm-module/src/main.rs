@@ -1,8 +1,6 @@
 use image::{ImageBuffer, Pixel, Rgba};
 use libc::mode_t;
-use libc::{rusage};
 use ndarray::s;
-use num_threads::num_threads;
 use std::error::Error;
 use std::fs;
 use std::{
