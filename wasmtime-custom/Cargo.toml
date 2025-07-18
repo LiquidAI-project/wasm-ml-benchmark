@@ -6,11 +6,10 @@ authors = ["Ville Heikkilä"]
 [dependencies]
 anyhow = "1.0.86"
 cap-std = "3.1.0"
-local-names = { path = "../local-names" }
-wasmtime = { path = "../../wasmtime-repo/crates/wasmtime", features = ["component-model", "runtime", "cranelift"] }
-wasmtime-wasi = { path = "../../wasmtime-repo/crates/wasi" }
-wasi-common = { path = "../../wasmtime-repo/crates/wasi-common", features = ["sync"] }
-wasmtime-wasi-nn = { path = "../../wasmtime-repo/crates/wasi-nn", features = ["onnx"] }
+wasmtime = { path = "../wasmtime-repo/crates/wasmtime", features = ["component-model", "runtime", "cranelift"] }
+wasmtime-wasi = { path = "../wasmtime-repo/crates/wasi" }
+wasi-common = { path = "../wasmtime-repo/crates/wasi-common", features = ["sync"] }
+wasmtime-wasi-nn = { path = "../wasmtime-repo/crates/wasi-nn", features = ["onnx"] }
 libc = "0.2.174"
 
 [build-dependencies]

@@ -990,10 +990,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "wasi-nn-practice"
+name = "wasi-nn-module"
 version = "0.1.0"
 dependencies = [
  "image",
+ "libc",
  "ndarray",
  "wasi-nn",
 ]

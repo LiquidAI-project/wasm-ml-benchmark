@@ -3,11 +3,9 @@ extern crate wasmtime_wasi;
 extern crate wasi_common;
 extern crate anyhow;
 extern crate cap_std;
-extern crate local_names;
 extern crate wasmtime_wasi_nn;
 
 use anyhow::{Ok, Result};
-use local_names::{get_image_index, get_model_index};
 use std::{env, path::Path, time::Instant};
 use wasmtime::{Config, Engine, Module, Store};
 use wasi_common::{sync::Dir, sync::WasiCtxBuilder, WasiCtx};

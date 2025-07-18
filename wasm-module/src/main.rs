@@ -1,5 +1,5 @@
 use image::{ImageBuffer, Pixel, Rgba};
-use libc::mode_t;
+use libc::rusage;
 use ndarray::s;
 use std::error::Error;
 use std::fs;
