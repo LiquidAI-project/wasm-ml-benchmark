@@ -73,8 +73,6 @@ fn main() -> wasmtime::Result<()> {
     // };
     // let repeats: u32 = args[4].parse().unwrap();
 
-    let start: Instant = Instant::now();
-
     let config = Config::default();
     let engine = Engine::new(&config)?;
     let mut linker = wasmtime::Linker::new(&engine);
@@ -86,7 +84,6 @@ fn main() -> wasmtime::Result<()> {
         &engine,
         Ctx::new(&shared_dirs)?
     );
-    let environment_set_time = start.elapsed();
 
     let wasm_module_serialized_name = wasm_module_filename.to_string() + ".SERIALIZED";
     let wasm_module =
@@ -105,17 +102,11 @@ fn main() -> wasmtime::Result<()> {
     const MODULE_NAME: &str = "test";
     const FUNCTION_NAME: &str = "main";
     linker.module(&mut store, MODULE_NAME, &wasm_module)?;
-    let module_load_time = start.elapsed() - environment_set_time;
 
     let inference_function = linker
         .get(&mut store, MODULE_NAME, FUNCTION_NAME).unwrap()
         .into_func().unwrap()
         .typed::<(), ()>(&mut store).unwrap();
-    let function_load_time = start.elapsed() - environment_set_time - module_load_time;
-
-    println!("Creating the Wasm environment took: {:?}", environment_set_time);
-    println!("Loading the Wasm module took: {:?}", module_load_time);
-    println!("Loading the Wasm function took: {:?}\n", function_load_time);
 
     let _result = inference_function.call(&mut store, ());
 
