@@ -59,8 +59,8 @@ void move_file(char *source_path, char *destination_path, char *output_message, 
 int main()
 {
     // Remove old binaries
-    const char *binary_files[] = {"./binaries/wasmtime-test", "./binaries/wasi-nn-module"};
-    remove_old_binaries(binary_files, 2);
+    const char *binary_files[] = {"./binaries/wasmtime-test", "./binaries/wasi-nn-module.wasm", "./binaries/wasi-nn-module.wasm.SERIALIZED"};
+    remove_old_binaries(binary_files, 3);
 
     // Change dir to wasm-module, compile the module and move to binaries folder
     change_dir("../wasm-module");
