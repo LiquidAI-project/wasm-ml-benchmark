@@ -1,0 +1,10 @@
+[package]
+name = "wasi-nn-module"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+wasi-nn = "0.6.0"
+image = "0.25.1"
+ndarray = "0.15.6"
+libc = "0.2.174"

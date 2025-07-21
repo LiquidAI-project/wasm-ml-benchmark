@@ -1,0 +1,19 @@
+{
+    "configurations": [
+
+    {
+        "name": "(lldb) Debug",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/scripts/benchmark_wasm",
+        "args": [
+            "2"
+        ],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}/scripts/binaries",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "lldb"
+    }
+    ]
+}

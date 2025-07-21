@@ -1,0 +1,5 @@
+benchmark
+build
+/binaries/*
+!/binaries/assets/
+!/binaries/assets/**
