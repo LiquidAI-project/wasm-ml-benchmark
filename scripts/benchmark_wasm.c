@@ -333,7 +333,6 @@ int main(int argc, char *argv[])
             Metrics m;
             if (strstr(line, "loadmodel Metrics"))
             {
-                printf("Load model detected");
                 if (parse_metrics_block(fp, &m, &avg_loadmodel_metrics, current_count))
                     write_csv(loadmodel_metrics_csv, &m);
             }
