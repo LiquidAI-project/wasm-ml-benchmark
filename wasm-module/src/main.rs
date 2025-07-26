@@ -1,5 +1,5 @@
 use image::{ImageBuffer, Pixel, Rgba};
-use libc::rusage;
+use libc::{getrusage, rusage};
 use ndarray::s;
 use std::error::Error;
 use std::fs;
@@ -28,12 +28,8 @@ impl Metrics {
     fn current(name: String) -> Self {
         unsafe {
             let mut usage: rusage = std::mem::zeroed();
-            usage.ru_utime.tv_sec = 1;
-            usage.ru_utime.tv_usec = 0;
-            usage.ru_stime.tv_sec = 1;
-            usage.ru_stime.tv_usec = 0;
 
-            // getrusage(0, &mut usage);
+            getrusage(0, &mut usage);
 
             let user_time: Duration = Duration::from_secs(usage.ru_utime.tv_sec as u64)
                 + Duration::from_micros(usage.ru_utime.tv_usec as u64);

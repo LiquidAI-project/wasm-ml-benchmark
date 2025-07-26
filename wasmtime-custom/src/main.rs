@@ -4,14 +4,16 @@ extern crate wasi_common;
 extern crate anyhow;
 extern crate cap_std;
 extern crate wasmtime_wasi_nn;
+extern crate libc;
 
 use anyhow::{Ok, Result};
+use libc::{getrusage, rusage};
 use std::{env, path::Path, time::Instant};
-use wasmtime::{Config, Engine, Module, Store};
+use wasmtime::{Caller, Config, Engine, Extern, Module, Store};
 use wasi_common::{sync::Dir, sync::WasiCtxBuilder, WasiCtx};
 use wasmtime::component::__internal::wasmtime_environ::__core::result::Result::Ok as WasmtimeResultOk;
 use wasmtime_wasi_nn::{InMemoryRegistry, WasiNnCtx, backend::onnxruntime::OnnxBackend};
-
+use std::mem;
 
 /// The host state for running wasi-nn tests.
 struct Ctx {
@@ -84,6 +86,46 @@ fn main() -> wasmtime::Result<()> {
         &engine,
         Ctx::new(&shared_dirs)?
     );
+
+    linker.func_wrap(
+        "env",
+        "getrusage",
+        move |mut caller: Caller<'_, _>, who: i32, rusage_ptr: i32| -> i32 {
+            let mut usage: rusage = unsafe { mem::zeroed() };
+
+            //who with a value other than 0 is not handled yet and currenly not needed in case of
+            //benchmarking
+            if who != 0 {
+                return -1;
+            }
+
+            unsafe { getrusage(who, &mut usage as *mut rusage) };
+
+            let memory = match caller.get_export("memory") {
+                Some(Extern::Memory(mem)) => mem,
+                _ => return -1,
+            };
+
+            // Convert to bytes
+            let usage_bytes = unsafe {
+                std::slice::from_raw_parts(
+                    &usage as *const rusage as *const u8,
+                    mem::size_of::<rusage>(),
+                )
+            };
+
+            let data = memory.data_mut(&mut caller);
+
+            if let Some(slice) =
+                data.get_mut(rusage_ptr as usize..rusage_ptr as usize + usage_bytes.len())
+            {
+                slice.copy_from_slice(usage_bytes);
+                0
+            } else {
+                -1
+            }
+        },
+    )?;
 
     let wasm_module_serialized_name = wasm_module_filename.to_string() + ".SERIALIZED";
     let wasm_module =
