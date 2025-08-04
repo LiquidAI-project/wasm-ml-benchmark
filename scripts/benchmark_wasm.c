@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
+#include <stdbool.h>
 
 #define MAX_LINE_LEN 512
 
@@ -136,11 +137,11 @@ void write_csv(FILE *file, Metrics *m)
     fprintf(file, "%.3f,%.3f,%.2f%%,%.3f,%ld\n", m->user_time, m->system_time, m->cpu_usage, m->wall_clock, m->max_rss);
 }
 
-int check_args(int argc, char *argv[], int *num_iterations)
+int check_args(int argc, char *argv[], int *num_iterations, bool *enableStackTrace)
 {
-    if (argc != 2)
+    if (argc != 3)
     {
-        fprintf(stderr, "Usage: %s <num_iterations>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <num_iterations> <enable_stack_trace>\n", argv[0]);
         return 1;
     }
 
@@ -150,6 +151,8 @@ int check_args(int argc, char *argv[], int *num_iterations)
         fprintf(stderr, "Error: Number of iterations must be a positive integer\n");
         return 1;
     }
+
+    *enableStackTrace = (atoi(argv[2]) != 0);
 
     return 0;
 }
@@ -221,6 +224,7 @@ void save_metrics_stats(const char *file_path,
 int main(int argc, char *argv[])
 {
     int num_iterations;
+    bool enableStackTrace;
     Metrics avg_loadmodel_metrics = {0};
     Metrics avg_readimg_metrics = {0};
     Metrics avg_redbox_metrics = {0};
@@ -232,7 +236,7 @@ int main(int argc, char *argv[])
 
     int current_count = 0;
 
-    if (check_args(argc, argv, &num_iterations))
+    if (check_args(argc, argv, &num_iterations, &enableStackTrace))
     {
         return 1;
     }
@@ -311,7 +315,9 @@ int main(int argc, char *argv[])
         printf("Running iteration %d\n", i);
         char command[1024];
         snprintf(command, sizeof(command),
-                 "./wasmtime-test wasi-nn-module.wasm > %s", stats_summary_path);
+                 "%s ./wasmtime-test wasi-nn-module.wasm > %s", enableStackTrace ? "RUST_BACKTRACE=1" : "", stats_summary_path);
+
+        printf("Running command, %s \n", command);
 
         if (system(command) != 0)
         {
@@ -320,7 +326,7 @@ int main(int argc, char *argv[])
         }
 
         FILE *fp = fopen(stats_summary_path, "r");
-        
+
         if (!fp)
         {
             printf("No stats summary file found");
