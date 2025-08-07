@@ -29,6 +29,7 @@ impl BackendInner for OnnxBackend {
 
         let session = Session::builder()?
             .with_optimization_level(GraphOptimizationLevel::Level3)?
+            .with_intra_op_spinning(false)?
             .commit_from_memory(builders[0])?;
 
         let box_: Box<dyn BackendGraph> =
